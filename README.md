@@ -1,4 +1,4 @@
-# HyMAD — Hybrid Multi-Activity Detection
+# HyMAD: Hybrid Multi-Activity Detection
 
 > **Multi-label seismic activity classification from raw waveforms under full spectral overlap**
 
@@ -10,7 +10,7 @@
 
 ## Overview
 
-Detecting concurrent seismic activities (e.g., a human intruder alongside a moving vehicle) is substantially harder than single-event classification because both activities share the same frequency band — standard spectral decomposition cannot separate them. HyMAD addresses this by fusing a learnable frequency encoder (SincNet) with an LSTM temporal encoder through a **bidirectional cross-attention** mechanism, enabling joint spectral–temporal reasoning over spectrally overlapping signals.
+Detecting concurrent seismic activities (e.g., a human intruder alongside a moving vehicle) is substantially harder than single-event classification because both activities share the same frequency band. Standard spectral decomposition cannot separate them. HyMAD addresses this by fusing a learnable frequency encoder (SincNet) with an LSTM temporal encoder through a **bidirectional cross-attention** mechanism, enabling joint spectral-temporal reasoning over spectrally overlapping signals.
 
 **Key result:** HyMAD achieves **96.5% F1 / 94.0% exact match** on a full-spectral-overlap benchmark, outperforming the strongest raw-waveform baseline (CNN-1D) by **28.0%** on concurrent-activity samples where both activities must be jointly detected.
 
@@ -22,9 +22,9 @@ Detecting concurrent seismic activities (e.g., a human intruder alongside a movi
 
 The pipeline has three stages:
 
-1. **Spatio-Temporal Feature Extractor** — SincNet (40 bandpass filters, kernel=251, mel-scale initialized in [20–500] Hz) extracts interpretable spectral features from the raw waveform, which are downsampled to 64 time steps and fed into a 3-layer LSTM to capture temporal dynamics.
-2. **Time-Frequency Fusion (HyMAD Module)** — Both the SincNet and LSTM outputs receive positional encodings and pass through their own self-attention blocks. A bidirectional cross-attention module then lets the frequency stream attend to the temporal stream and vice versa, with the two outputs mean-pooled and concatenated into a 256-dim representation.
-3. **MLP Classifier** — A two-layer MLP (256 → 128 → 4) with sigmoid activation produces independent probability scores for each activity class.
+1. **Spatio-Temporal Feature Extractor:** SincNet (40 bandpass filters, kernel=251, mel-scale initialized in [20-500] Hz) extracts interpretable spectral features from the raw waveform, which are downsampled to 64 time steps and fed into a 3-layer LSTM to capture temporal dynamics.
+2. **Time-Frequency Fusion (HyMAD Module):** Both the SincNet and LSTM outputs receive positional encodings and pass through their own self-attention blocks. A bidirectional cross-attention module then lets the frequency stream attend to the temporal stream and vice versa, with the two outputs mean-pooled and concatenated into a 256-dim representation.
+3. **MLP Classifier:** A two-layer MLP (256 to 128 to 4) with sigmoid activation produces independent probability scores for each activity class.
 
 224K parameters total.
 
@@ -101,7 +101,12 @@ python train.py                   # saves to runs/HyMAD/
 python train.py --exp my_run      # custom experiment name
 ```
 
-The best checkpoint (lowest validation loss) is saved as `runs/<exp>/best_model.pth`. Training uses AdamW (lr=5×10⁻³, weight decay=10⁻⁴), batch size 256, 400 epochs with 15% linear warmup followed by cosine decay.
+The best checkpoint (lowest validation loss) is saved as `runs/<exp>/best_model.pth`. Training uses AdamW (lr=5x10^-3, weight decay=10^-4), batch size 256, 400 epochs with 15% linear warmup followed by cosine decay.
+
+To resume interrupted training:
+```bash
+python train.py --exp my_run --resume
+```
 
 ---
 
@@ -112,7 +117,7 @@ python inference.py               # evaluates runs/HyMAD/best_model.pth
 python inference.py --exp my_run  # custom experiment
 ```
 
-Outputs: per-class classification report, confusion matrices, ROC curves, and precision–recall curves saved under `runs/<exp>/`.
+Outputs: per-class classification report, confusion matrices, ROC curves, and precision-recall curves saved under `runs/<exp>/`.
 
 ---
 
@@ -120,6 +125,7 @@ Outputs: per-class classification report, confusion matrices, ROC curves, and pr
 
 ```bash
 python ablations/run_ablations.py
+python ablations/run_ablations.py --resume   # resume interrupted run
 ```
 
 Runs ablation variants: full HyMAD, no RNN, no self-attention, unidirectional cross-attention, naive fusion (concatenation), and Conv1D front-end (SincNet replaced with standard Conv1d).
@@ -152,7 +158,7 @@ HyMAD/
 ├── data_realism.py            # Dataset generation: superimposes single-activity recordings
 ├── model/
 │   ├── model.py               # SincNetRNN (full HyMAD)
-│   ├── sincnet.py             # SincConv1D with data-driven initialization
+│   ├── sincnet.py             # SincConv1D with mel-scale initialization
 │   ├── transformer.py         # SelfAttention, CrossAttention
 │   └── positional_encoding.py
 ├── dataset/
