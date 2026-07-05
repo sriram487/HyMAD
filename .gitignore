@@ -1,0 +1,37 @@
+# Model weights
+*.pth
+*.pt
+*.ckpt
+*.pkl
+
+# Experiment runs (contain weights and logs)
+runs/
+ablations/results/
+
+# Baseline training artifacts
+baseline/trained_models/
+baseline/catboost_info/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Data
+*.npy
+*.npz
+
+# Logs and outputs
+*.log
+*.out
+tensorboard/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
