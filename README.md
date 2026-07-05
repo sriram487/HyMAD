@@ -12,7 +12,7 @@
 
 Detecting concurrent seismic activities (e.g., a human intruder alongside a moving vehicle) is substantially harder than single-event classification because both activities share the same frequency band. Standard spectral decomposition cannot separate them. HyMAD addresses this by fusing a learnable frequency encoder (SincNet) with an LSTM temporal encoder through a **bidirectional cross-attention** mechanism, enabling joint spectral-temporal reasoning over spectrally overlapping signals.
 
-**Key result:** HyMAD achieves **96.5% F1 / 94.0% exact match** on a full-spectral-overlap benchmark, outperforming the strongest raw-waveform baseline (CNN-1D) by **28.0%** on concurrent-activity samples where both activities must be jointly detected.
+**Key result:** HyMAD achieves **96.6% F1 / 94.3% exact match** on a full-spectral-overlap benchmark, outperforming the strongest raw-waveform baseline (CNN-1D) by **28.0%** on concurrent-activity samples where both activities must be jointly detected.
 
 ---
 
@@ -22,7 +22,7 @@ Detecting concurrent seismic activities (e.g., a human intruder alongside a movi
 
 The pipeline has three stages:
 
-1. **Spatio-Temporal Feature Extractor:** SincNet (40 bandpass filters, kernel=251, mel-scale initialized in [20-500] Hz) extracts interpretable spectral features from the raw waveform, which are downsampled to 64 time steps and fed into a 3-layer LSTM to capture temporal dynamics.
+1. **Spatio-Temporal Feature Extractor:** SincNet (40 bandpass filters, kernel=251, mel-scale initialized in [20-3930] Hz) extracts interpretable spectral features from the raw waveform, which are downsampled to 64 time steps and fed into a 3-layer LSTM to capture temporal dynamics.
 2. **Time-Frequency Fusion (HyMAD Module):** Both the SincNet and LSTM outputs receive positional encodings and pass through their own self-attention blocks. A bidirectional cross-attention module then lets the frequency stream attend to the temporal stream and vice versa, with the two outputs mean-pooled and concatenated into a 256-dim representation.
 3. **MLP Classifier:** A two-layer MLP (256 to 128 to 4) with sigmoid activation produces independent probability scores for each activity class.
 
@@ -43,7 +43,7 @@ The pipeline has three stages:
 | BiLSTM | MFCC | 91.8% | 94.8% | 99.2% |
 | LSTM | MFCC | 90.5% | 94.4% | 99.1% |
 | CNN-1D | Raw | 82.2% | 92.4% | 98.3% |
-| **HyMAD (ours)** | **Raw** | **94.0%** | **96.5%** | **99.5%** |
+| **HyMAD (ours)** | **Raw** | **94.3%** | **96.6%** | **99.4%** |
 
 ### Single-label vs. concurrent-activity breakdown
 
@@ -77,7 +77,7 @@ The dataset contains seismic recordings from a geophone array (HSG HG-24U, 10 Hz
 | Human + Vehicle | 3,960 |
 | Animal + Vehicle | 3,350 |
 
-**Total: 26,010 samples.** Train / val / test split is 70 / 15 / 15.
+**Total: 26,010 samples.** Train / val / test split is 80 / 10 / 10.
 
 > The dataset is not included in this repository. Place it at `../seismic/Superimposed_Data/` with `train/`, `val/`, and `test/` subdirectories. Each `.pt` file should contain `{"signal": Tensor[7999], "label": Tensor[4]}`.
 

@@ -35,3 +35,5 @@ tensorboard/
 # OS
 .DS_Store
 Thumbs.db
+
+assets/rect12.png

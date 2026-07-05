@@ -27,19 +27,18 @@ class SincConv1D(nn.Module):
         if in_channels != 1:
             raise ValueError("SincConv1D only supports one input channel.")
 
-        # Mel-scale initialisation concentrated in the discriminative band (20–500 Hz).
-        # Fisher discriminability analysis shows >95% of class-separating energy falls
-        # below 500 Hz; initialising all 40 filters here gives better gradient flow
-        # than spreading them across the full Nyquist range (20–4000 Hz).
+        # Mel-scale filter bank initialisation (matches original SincNet paper).
+        # Filters are spaced across the full usable spectrum; mel spacing concentrates
+        # more filters at lower frequencies where seismic discriminative energy is highest.
         low_hz  = float(min_low_hz)
-        high_hz = 500.0 - min_band_hz   # cap at 500 Hz; filters free to drift during training
+        high_hz = self.sample_rate / 2.0 - (min_low_hz + min_band_hz)
 
         mel_low  = _to_mel(low_hz)
         mel_high = _to_mel(high_hz)
         mel_pts  = np.linspace(mel_low, mel_high, out_channels + 1)
         hz_pts   = _to_hz(mel_pts)                             # (out_channels + 1,)
 
-        self.low_hz_  = nn.Parameter(torch.Tensor(hz_pts[:-1] - min_low_hz))
+        self.low_hz_  = nn.Parameter(torch.Tensor(hz_pts[:-1]))
         self.band_hz_ = nn.Parameter(torch.Tensor(np.diff(hz_pts)))
 
         # Hamming window (full kernel)

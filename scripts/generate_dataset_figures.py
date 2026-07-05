@@ -1,7 +1,7 @@
 """
 Generate all dataset section figures for the HyMAD paper.
 
-Outputs (saved to seismic_final_tex/figures/):
+Outputs (saved to plots/):
   waveform_examples.png         — Single vs merged waveform (normalised, same y-axis)
   energy_distribution.png       — Per-class RMS energy box plot
   psd_single_vs_merged.png      — PSD: Human, Vehicle, and merged Human+Vehicle
@@ -22,8 +22,9 @@ import matplotlib.pyplot as plt
 from scipy.signal import welch
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
+REPO_ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR   = "/home/sriram/Desktop/seismic/Superimposed_Data"
-OUT_DIR    = "/home/sriram/Desktop/seismic_final_tex/figures"
+OUT_DIR    = os.path.join(REPO_ROOT, "plots")
 SPLIT      = "test"
 SR         = 8000
 
@@ -223,4 +224,4 @@ plt.savefig(os.path.join(OUT_DIR, "spectrogram_single_vs_merged.png"), **STYLE)
 plt.close()
 print("  ✓ spectrogram_single_vs_merged.png")
 
-print("\nAll figures saved to", OUT_DIR)
+print("\nAll figures saved to:", OUT_DIR)

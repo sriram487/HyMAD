@@ -5,12 +5,13 @@ Usage (from repo root):
   conda run -n torch_env python scripts/tsne.py
 
 Output:
-  seismic_final_tex/figures/tsne_combo_plot.png
+  plots/tsne_combo_plot.png
 """
 
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO_ROOT)
 
 import torch
 import numpy as np
@@ -25,8 +26,8 @@ from dataset.multi_label import SeismicMergedDataset
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DATA_DIR    = "/home/sriram/Desktop/seismic/Superimposed_Data"
-WEIGHTS     = "/home/sriram/Desktop/HyMAD/runs/HyMAD/best_model.pth"
-OUT_PATH    = "/home/sriram/Desktop/seismic_final_tex/figures/tsne_combo_plot.png"
+WEIGHTS     = os.path.join(REPO_ROOT, "runs", "HyMAD", "best_model.pth")
+OUT_PATH    = os.path.join(REPO_ROOT, "plots", "tsne_combo_plot.png")
 
 # Internal keys from the dataset label order: [Animal, Human, No Event, Vehicle]
 CLASS_KEYS  = ["Animal_Movement", "Human_Movement", "No_Movement", "Vehicle_Movement"]

@@ -1,11 +1,13 @@
 """
-Generate a two-panel frequency analysis figure that motivates the
-SincNet filter initialization range (20–150 Hz).
+Generate a two-panel frequency analysis figure that motivates mel-scale
+filter initialization in SincNet: most discriminative seismic energy is
+concentrated below 150 Hz, justifying denser filter coverage at low
+frequencies via mel spacing (filters span 20–3930 Hz in the model).
 
 Panel A: Mean PSD per class (0–500 Hz), with 150 Hz threshold marked.
 Panel B: Between-class Fisher discriminability per frequency bin.
 
-Output: seismic_final_tex/figures/discriminative_freq_analysis.png
+Output: plots/discriminative_freq_analysis.png
 
 Usage:
   conda run -n torch_env python scripts/plot_discriminative_freq.py
@@ -21,8 +23,9 @@ import matplotlib.pyplot as plt
 from scipy.signal import welch
 
 # ── Config ─────────────────────────────────────────────────────────────────────
-DATA_DIR = "/home/sriram/Desktop/seismic/Superimposed_Data"
-OUT_PATH = "/home/sriram/Desktop/seismic_final_tex/figures/discriminative_freq_analysis.png"
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR  = "/home/sriram/Desktop/seismic/Superimposed_Data"
+OUT_PATH  = os.path.join(REPO_ROOT, "plots", "discriminative_freq_analysis.png")
 SR       = 8000
 NPERSEG  = 1024      # frequency resolution ~7.8 Hz
 FMAX_HZ  = 500       # plot up to 500 Hz to show context beyond the 150 Hz band
